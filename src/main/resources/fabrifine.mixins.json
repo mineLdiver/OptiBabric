@@ -9,6 +9,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "plugin": "net.mine_diver.fabrifine.MixinPlugin"
+  }
 }

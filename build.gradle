@@ -74,6 +74,12 @@ dependencies {
 
 	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
+
+	compileOnly "org.projectlombok:lombok:1.18.22"
+	annotationProcessor "org.projectlombok:lombok:1.18.22"
+
+	if (file("run/.fabrifine/optifine-remapped.jar").exists())
+		compileOnly files('run/.fabrifine/optifine-remapped.jar')
 }
 
 processResources {

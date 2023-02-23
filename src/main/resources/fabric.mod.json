@@ -18,6 +18,9 @@
 
   "environment": "client",
   "entrypoints": {
+    "mm:early_risers": [
+      "net.mine_diver.fabrifine.FabriFine"
+    ]
   },
   "mixins": [
     "fabrifine.mixins.json"
@@ -25,5 +28,9 @@
 
   "depends": {
     "minecraft": "1.0.0-beta.7.3"
+  },
+
+  "custom": {
+    "station-renderer-api-v0:contains_renderer": true
   }
 }

@@ -1,0 +1,323 @@
+package net.mine_diver.fabrifine;
+
+import com.chocohead.mm.api.ClassTinkerers;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.launch.common.FabricLauncherBase;
+import net.fabricmc.mapping.tree.ClassDef;
+import net.fabricmc.mapping.tree.FieldDef;
+import net.fabricmc.mapping.tree.MethodDef;
+import net.fabricmc.mapping.tree.TinyTree;
+import net.fabricmc.tinyremapper.IMappingProvider;
+import net.fabricmc.tinyremapper.OutputConsumerPath;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.mine_diver.fabrifine.util.Edition;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class FabriFine implements Runnable {
+
+    public static final Logger LOGGER = LogManager.getLogger("FabriFine");
+    public static final File WORK_DIR = FabricLoader.getInstance().getGameDir().resolve(".fabrifine").toFile();
+    static {
+        if (!WORK_DIR.exists() && ! WORK_DIR.mkdirs()) throw new RuntimeException("Couldn't create " + WORK_DIR + "!");
+    }
+    public static Edition EDITION;
+
+    @Override
+    public void run() {
+        File ofFile = getRemappedOptifine();
+        File mcFile = getLaunchMinecraftJar().toFile();
+        try {
+            ClassTinkerers.addURL(ofFile.toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        try (ZipFile ofZip = new ZipFile(ofFile); ZipFile mcZip = new ZipFile(mcFile)) {
+            Enumeration<? extends ZipEntry> entries = ofZip.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String name = entry.getName();
+                if (name.endsWith(".class") && mcZip.getEntry(name) != null) {
+                    String className = name.substring(0, name.length() - ".class".length());
+                    ClassNode ofNode = new ClassNode();
+                    new ClassReader(IOUtils.toByteArray(ofZip.getInputStream(entry))).accept(ofNode, ClassReader.EXPAND_FRAMES);
+                    ClassTinkerers.addReplacement(className, mcNode -> {
+                        ofNode.fields.forEach(ofField -> {
+                            Optional<FieldNode> mcFieldNode = mcNode.fields.stream().filter(fieldNode -> ofField.name.equals(fieldNode.name)).findFirst();
+                            boolean fieldPresent = mcFieldNode.isPresent();
+                            if (fieldPresent) {
+                                FieldNode mcField = mcFieldNode.get();
+                                if (mcField.desc.equals(ofField.desc) && mcField.access == ofField.access) return;
+                            }
+                            boolean skipCheck = false;
+                            if (fieldPresent) {
+                                for (int i = 0; i < mcNode.fields.size(); i++)
+                                    if (ofField.name.equals(mcNode.fields.get(i).name)) {
+                                        mcNode.fields.set(i, ofField);
+                                        return;
+                                    }
+                                LOGGER.warn("Couldn't find overwrite target field \"L" + ofNode.name + ";" + ofField.name + ":" + ofField.desc + "\"! Injecting instead.");
+                                skipCheck = true;
+                            }
+                            if (skipCheck || mcNode.fields.stream().noneMatch(fieldNode -> ofField.name.equals(fieldNode.name))) {
+                                mcNode.fields.add(ofField);
+//                                MixinHelper.addFieldInfo(mcNode, ofField);
+                            }
+                        });
+                        mcNode.methods = ofNode.methods;
+                    });
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static File getRemappedOptifine() {
+        File ofFile = findOptifine();
+        File remappedOfFile = new File(WORK_DIR, "optifine-remapped.jar");
+        if (!remappedOfFile.exists() || hasChanged(ofFile)) try {
+            remappedOfFile.createNewFile();
+            remap(ofFile, getLibs(getMinecraftJar()), remappedOfFile, out -> {
+                try (ZipFile ofZip = new ZipFile(ofFile)) {
+                    Enumeration<? extends ZipEntry> entries = ofZip.entries();
+                    while (entries.hasMoreElements()) {
+                        String name = entries.nextElement().getName();
+                        if (name.endsWith(".class")) {
+                            String className = name.substring(0, name.length() - ".class".length());
+                            out.acceptClass(className, "net/optifine/" + className);
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                createMappings("client", FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace()).load(out);
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return remappedOfFile;
+    }
+
+    private static File findOptifine() {
+        for (File file : Objects.requireNonNull(FabricLoader.getInstance().getGameDir().resolve("mods").toFile().listFiles((dir, name) -> new File(dir, name).isFile() && (name.endsWith(".zip") || name.endsWith(".jar"))))) {
+            String name = file.getName();
+            try (ZipFile zipFile = new ZipFile(file)) {
+                ZipEntry entry = zipFile.getEntry("Config.class");
+                if (entry != null) {
+                    LOGGER.info("Found OptiFine in: " + name);
+                    InputStream configStream = zipFile.getInputStream(entry);
+                    ClassNode configNode = new ClassNode();
+                    ClassReader configReader = new ClassReader(IOUtils.toByteArray(configStream));
+                    configReader.accept(configNode, 0);
+                    EDITION = Edition.fromVersion((String) StreamSupport.stream(configNode.methods.stream().filter(methodNode -> "getVersion".equals(methodNode.name)).findFirst().orElseThrow(NullPointerException::new).instructions.spliterator(), false).filter(abstractInsnNode -> AbstractInsnNode.LDC_INSN == abstractInsnNode.getType()).map(abstractInsnNode -> (LdcInsnNode) abstractInsnNode).findFirst().orElseThrow(NullPointerException::new).cst);
+                    LOGGER.info("Edition detected: " + EDITION.name());
+                    return file;
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        throw new RuntimeException("Couldn't find OptiFine in mods folder!");
+    }
+
+    private static void remap(File input, Path[] libraries, File output, IMappingProvider mappings) throws IOException {
+        remap(input.toPath(), libraries, output.toPath(), mappings);
+    }
+
+    private static void remap(Path input, Path[] libraries, Path output, IMappingProvider mappings) throws IOException {
+        Files.deleteIfExists(output);
+
+        TinyRemapper remapper = TinyRemapper.newRemapper().withMappings(mappings).renameInvalidLocals(FabricLoader.getInstance().isDevelopmentEnvironment()).rebuildSourceFilenames(true).fixPackageAccess(true).build();
+
+        try (OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(output).assumeArchive(true).build()) {
+            outputConsumer.addNonClassFiles(input);
+            remapper.readInputs(input);
+            remapper.readClassPath(libraries);
+
+            remapper.apply(outputConsumer);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to remap jar", e);
+        } finally {
+            remapper.finish();
+        }
+    }
+
+    private static IMappingProvider createMappings(String from, String to) {
+        //noinspection deprecation
+        TinyTree normalMappings = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+
+        //In prod
+        return out -> {
+            for (ClassDef classDef : normalMappings.getClasses()) {
+                String rawName;
+                try {
+                    rawName = classDef.getRawName(from);
+                    if (rawName.isEmpty()) continue; // we don't need definitions from other namespaces, so skipping the "namespace--" loop is necessary
+                } catch (ArrayIndexOutOfBoundsException ignored) {}
+                String className = classDef.getName(from);
+                out.acceptClass(className, classDef.getName(to));
+
+                for (FieldDef field : classDef.getFields()) {
+                    out.acceptField(new IMappingProvider.Member(className, field.getName(from), field.getDescriptor(from)), field.getName(to));
+                }
+
+                for (MethodDef method : classDef.getMethods()) {
+                    out.acceptMethod(new IMappingProvider.Member(className, method.getName(from), method.getDescriptor(from)), method.getName(to));
+                }
+            }
+        };
+    }
+
+    private static Path[] getLibs(Path minecraftJar) {
+        //noinspection deprecation
+        Path[] libs = FabricLauncherBase.getLauncher().getLoadTimeDependencies().stream().map(url -> {
+            try {
+                return Paths.get(url.toURI());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("Failed to convert " + url + " to path", e);
+            }
+        }).filter(Files::exists).toArray(Path[]::new);
+
+        out: if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            Path launchJar = getLaunchMinecraftJar();
+
+            for (int i = 0, end = libs.length; i < end; i++) {
+                Path lib = libs[i];
+
+                if (launchJar.equals(lib)) {
+                    libs[i] = minecraftJar;
+                    break out;
+                }
+            }
+
+            //Can't find the launch jar apparently, remapping will go wrong if it is left in
+            throw new IllegalStateException("Unable to find Minecraft jar (at " + launchJar + ") in classpath: " + Arrays.toString(libs));
+        }
+
+        return libs;
+    }
+
+    public static Path getMinecraftJar() {
+        String givenJar = System.getProperty("fabrifine.mc-jar");
+        if (givenJar != null) {
+            File givenJarFile = new File(givenJar);
+
+            if (givenJarFile.exists()) {
+                return givenJarFile.toPath();
+            } else {
+                System.err.println("Supplied Minecraft jar at " + givenJar + " doesn't exist, falling back");
+            }
+        }
+
+        Path minecraftJar = getLaunchMinecraftJar();
+
+        if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            Path officialNames = minecraftJar.resolveSibling(String.format("minecraft-%s-client.jar", "b1.7.3"));
+
+            if (Files.notExists(officialNames)) {
+                Path parent = minecraftJar.getParent().resolveSibling(String.format("minecraft-%s-client.jar", "b1.7.3"));
+
+                if (Files.notExists(parent)) {
+                    Path alternativeParent = parent.resolveSibling("minecraft-client.jar");
+
+                    if (Files.notExists(alternativeParent)) {
+                        throw new AssertionError("Unable to find Minecraft dev jar! Tried " + officialNames + ", " + parent + " and " + alternativeParent
+                                + "\nPlease supply it explicitly with -Dfabrifine.mc-jar");
+                    }
+
+                    parent = alternativeParent;
+                }
+
+                officialNames = parent;
+            }
+
+            minecraftJar = officialNames;
+        }
+
+        return minecraftJar;
+    }
+
+    public static Path getLaunchMinecraftJar() {
+        ModContainer mod = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow(() -> new IllegalStateException("No Minecraft?"));
+        URI uri = mod.getRootPaths().get(0).toUri();
+        assert "jar".equals(uri.getScheme());
+
+        String path = uri.getSchemeSpecificPart();
+        int split = path.lastIndexOf("!/");
+
+        if (path.substring(0, split).indexOf(' ') > 0 && path.startsWith("file:///")) {//This is meant to be a URI...
+            Path out = Paths.get(path.substring(8, split));
+            if (Files.exists(out)) return out;
+        }
+
+        try {
+            return Paths.get(new URI(path.substring(0, split)));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Failed to find Minecraft jar from " + uri + " (calculated " + path.substring(0, split) + ')', e);
+        }
+    }
+
+    public static boolean hasChanged(File optifine) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        try (InputStream stream = Files.newInputStream(optifine.toPath()); DigestInputStream digest = new DigestInputStream(stream, md)) {
+            while (true) if (digest.read() == -1) break;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] md5 = md.digest();
+        File md5File = new File(WORK_DIR, "optifine.md5");
+        if (md5File.exists()) {
+            try (InputStream md5Stream = Files.newInputStream(md5File.toPath())) {
+                byte[] md5Existing = IOUtils.toByteArray(md5Stream);
+                return !Arrays.equals(md5, md5Existing);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                if (!md5File.createNewFile()) throw new RuntimeException("Couldn't create " + md5File + "!");
+                try (OutputStream stream = Files.newOutputStream(md5File.toPath())) {
+                    stream.write(md5);
+                    stream.flush();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+    }
+}
