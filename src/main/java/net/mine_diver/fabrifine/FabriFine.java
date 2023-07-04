@@ -56,6 +56,8 @@ public class FabriFine implements Runnable {
     public void run() {
         if (isPresent("station-renderer-arsenic"))
             Mixins.addConfiguration("fabrifine.compat.stationapi.mixins.json");
+        if (isPresent("glsl"))
+            Mixins.addConfiguration("fabrifine.compat.glsl.mixins.json");
         File ofFile = getRemappedOptifine();
         File mcFile = getLaunchMinecraftJar().toFile();
         try {
