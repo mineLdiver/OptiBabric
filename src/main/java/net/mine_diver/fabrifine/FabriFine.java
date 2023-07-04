@@ -20,6 +20,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +54,8 @@ public class FabriFine implements Runnable {
 
     @Override
     public void run() {
+        if (isPresent("station-renderer-arsenic"))
+            Mixins.addConfiguration("fabrifine.compat.stationapi.mixins.json");
         File ofFile = getRemappedOptifine();
         File mcFile = getLaunchMinecraftJar().toFile();
         try {
@@ -92,6 +95,17 @@ public class FabriFine implements Runnable {
 //                                MixinHelper.addFieldInfo(mcNode, ofField);
                             }
                         });
+//                        for (MethodNode ofMethod : ofNode.methods) {
+//                            Optional<MethodNode> mcMethodOptional = mcNode.methods.stream().filter(mcMethod -> ofMethod.name.equals(mcMethod.name) && ofMethod.desc.equals(mcMethod.desc)).findFirst();
+//                            if (mcMethodOptional.isPresent()) {
+//                                MethodNode mcMethod = mcMethodOptional.get();
+//                                if (!new MethodComparison(mcMethod, ofMethod).effectivelyEqual) {
+//                                    mcNode.methods.remove(mcMethod);
+//                                    mcNode.methods.add(ofMethod);
+//                                }
+//                            } else
+//                                mcNode.methods.add(ofMethod);
+//                        }
                         mcNode.methods = ofNode.methods;
                     });
                 }
@@ -99,6 +113,10 @@ public class FabriFine implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean isPresent(String modID) {
+        return FabricLoader.getInstance().isModLoaded(modID);
     }
 
     private static File getRemappedOptifine() {

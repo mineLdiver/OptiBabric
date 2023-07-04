@@ -1,0 +1,13 @@
+{
+  "parent": "fabrifine.mixins.json",
+  "package": "net.mine_diver.fabrifine.compat.stationapi.mixin",
+  "plugin": "net.mine_diver.fabrifine.compat.stationapi.StationAPIMixinPlugin",
+  "client": [
+    "BedRendererNewMixin",
+    "FluidRendererNewMixin",
+    "LeverRendererNewMixin"
+  ],
+  "mixins": [
+    "StationTessellatorImplMixin"
+  ]
+}

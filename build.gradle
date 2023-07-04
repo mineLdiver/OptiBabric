@@ -65,7 +65,7 @@ dependencies {
 	modImplementation("com.github.calmilamsy:ModMenu:${project.modmenu_version}") {
 		transitive false
 	}
-	modImplementation("com.github.calmilamsy:glass-config-api:${project.gcapi_version}") {
+	modImplementation("net.glasslauncher.mods:GlassConfigAPI:${project.gcapi_version}") {
 		transitive false
 	}
 	modImplementation("net.glasslauncher:HowManyItems-Fabric-Unofficial:${project.howmanyitems_version}") {
@@ -74,9 +74,6 @@ dependencies {
 
 	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
-
-	compileOnly "org.projectlombok:lombok:1.18.22"
-	annotationProcessor "org.projectlombok:lombok:1.18.22"
 
 	if (file("run/.fabrifine/optifine-remapped.jar").exists())
 		compileOnly files('run/.fabrifine/optifine-remapped.jar')

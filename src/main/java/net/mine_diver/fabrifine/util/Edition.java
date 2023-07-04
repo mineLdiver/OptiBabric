@@ -1,14 +1,12 @@
 package net.mine_diver.fabrifine.util;
 
 import com.google.common.collect.Iterables;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public enum Edition {
     STANDARD("HD"),
     SMOOTH("HD_S"),
@@ -16,6 +14,10 @@ public enum Edition {
     ANTIALIASING("HD_AA");
 
     public final String id;
+
+    private Edition(String id) {
+        this.id = id;
+    }
 
     public static Edition fromVersion(String version) {
         String editionAndVersion = version.substring("OptiFine_1.7.3_".length());
