@@ -4,6 +4,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
@@ -11,6 +12,8 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo.Method;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +21,39 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MixinUtils {
-	public static class MixinInfo {
+    private static final Field CLASSINFO_FIELDS;
+	private static final java.lang.reflect.Method CLASSINFO_ADDMETHOD;
+
+	static {
+		try {
+			CLASSINFO_FIELDS = ClassInfo.class.getDeclaredField("fields");
+			CLASSINFO_FIELDS.setAccessible(true);
+			CLASSINFO_ADDMETHOD = ClassInfo.class.getDeclaredMethod("addMethod", MethodNode.class, boolean.class);
+			CLASSINFO_ADDMETHOD.setAccessible(true);
+		} catch (NoSuchMethodException | NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+    public static void addFieldInfo(ClassNode classNode, FieldNode fieldNode) {
+        try {
+            ClassInfo info = ClassInfo.forName(classNode.name);
+            //noinspection unchecked
+            ((Set<ClassInfo.Field>) CLASSINFO_FIELDS.get(info)).add(info.new Field(fieldNode));
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addMethodInfo(ClassNode classNode, MethodNode methodNode) {
+        try {
+            CLASSINFO_ADDMETHOD.invoke(ClassInfo.forName(classNode.name), methodNode, false);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static class MixinInfo {
 		private final IMixinConfig config;
 		private final java.lang.reflect.Method getMixins;
 

@@ -1,11 +1,13 @@
 {
   "schemaVersion": 1,
-  "id": "fabrifine",
+  "id": "optifabric",
   "version": "${version}",
 
-  "name": "FabriFine",
-  "description": "OptiFine loader for Fabric!",
+  "name": "OptiFabric",
+  "description": "OptiFabric is a mod that loads OptiFine into Fabric",
   "authors": [
+    "Modmuss50",
+    "Chocohead",
     "mine_diver"
   ],
   "contact": {
@@ -13,23 +15,22 @@
     "sources": "https://github.com/calmilamsy/BIN-fabric-example-mod"
   },
 
-  "license": "MIT",
-  "icon": "assets/fabrifine/icon.png",
+  "license": "MPL-2.0",
+  "icon": "assets/optifabric/icon.png",
 
   "environment": "client",
   "entrypoints": {
     "mm:early_risers": [
-      "net.mine_diver.fabrifine.FabriFine"
+      "me.modmuss50.optifabric.mod.OptifabricSetup"
     ]
   },
   "mixins": [
-    "fabrifine.mixins.json"
+    "optifabric.mixins.json"
   ],
 
   "depends": {
-    "minecraft": "1.0.0-beta.7.3"
-  },
-
-  "custom": {
+    "fabricloader": ">=0.14.0",
+    "minecraft": "1.0.0-beta.7.3",
+    "mm": ">=2.0"
   }
 }

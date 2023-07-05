@@ -1,0 +1,15 @@
+{
+  "parent": "optifabric.mixins.json",
+  "package": "me.modmuss50.optifabric.compat.arsenic.mixin",
+  "plugin": "me.modmuss50.optifabric.compat.arsenic.ArsenicMixinPlugin",
+  "client": [
+    "ArsenicItemRendererMixin",
+    "ArsenicOverlayRendererMixin",
+    "BakedModelRendererImplMixin",
+    "BedRendererNewMixin",
+    "FluidRendererNewMixin",
+    "GameOptionsMixin",
+    "LeverRendererNewMixin",
+    "StationTessellatorImplMixin"
+  ]
+}

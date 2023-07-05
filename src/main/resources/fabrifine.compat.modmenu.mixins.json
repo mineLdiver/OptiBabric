@@ -1,7 +1,0 @@
-{
-  "parent": "fabrifine.mixins.json",
-  "package": "net.mine_diver.fabrifine.compat.modmenu.mixin",
-  "client": [
-    "ModMenuMixin"
-  ]
-}
