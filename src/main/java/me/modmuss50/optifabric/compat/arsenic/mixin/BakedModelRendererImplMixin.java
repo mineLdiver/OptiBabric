@@ -3,6 +3,9 @@ package me.modmuss50.optifabric.compat.arsenic.mixin;
 import me.modmuss50.optifabric.compat.arsenic.BakedModelRendererImplCompat;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.item.ItemInstance;
+import net.minecraft.level.BlockView;
+import net.minecraft.util.maths.TilePos;
+import net.modificationstation.stationapi.api.block.BlockState;
 import net.modificationstation.stationapi.api.client.render.model.BakedModel;
 import net.modificationstation.stationapi.impl.client.arsenic.renderer.render.BakedModelRendererImpl;
 import org.spongepowered.asm.mixin.Mixin;
@@ -68,5 +71,17 @@ public class BakedModelRendererImplMixin implements BakedModelRendererImplCompat
     )
     private int optifabric_renderEmptyStack(ItemInstance instance) {
         return 1;
+    }
+
+    @Inject(
+            method = "renderDamage",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/modificationstation/stationapi/impl/client/arsenic/renderer/render/BakedModelRendererImpl;render(Lnet/minecraft/level/BlockView;Lnet/modificationstation/stationapi/api/client/render/model/BakedModel;Lnet/modificationstation/stationapi/api/block/BlockState;Lnet/minecraft/util/maths/TilePos;ZLjava/util/Random;J)Z"
+            )
+    )
+    private void optifabric_deferredStartDamage(BlockState state, TilePos pos, BlockView world, float progress, CallbackInfo ci) {
+        Tessellator.INSTANCE.start();
+        Tessellator.INSTANCE.disableColour();
     }
 }

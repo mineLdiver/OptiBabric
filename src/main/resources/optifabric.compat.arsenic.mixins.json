@@ -10,6 +10,7 @@
     "FluidRendererNewMixin",
     "GameOptionsMixin",
     "LeverRendererNewMixin",
-    "StationTessellatorImplMixin"
+    "StationTessellatorImplMixin",
+    "WorldRendererMixin"
   ]
 }

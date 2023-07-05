@@ -60,26 +60,22 @@ class StationTessellatorImplMixin {
         Matrix4f texture = Matrix4f.translateTmp((float) access.getXOffset(), (float) access.getYOffset(), (float) access.getZOffset());
         texture.invert();
         for (int i = 0; i < 32; i+=8) {
+            float vx = x + Float.intBitsToFloat(data[i]), vy = y + Float.intBitsToFloat(data[i + 1]), vz = z + Float.intBitsToFloat(data[i + 2]);
             float u, v;
             if (spreadUV) {
-                damageUV.set(Float.intBitsToFloat(data[i]), Float.intBitsToFloat(data[i + 1]), Float.intBitsToFloat(data[i + 2]), 1.0F);
+                damageUV.set((float) (vx + access.getXOffset()), (float) (vy + access.getYOffset()), (float) (vz + access.getZOffset()), 1.0F);
                 damageUV.transform(texture);
                 damageUV.rotate(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
                 damageUV.rotate(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
                 damageUV.rotate(facing.getRotationQuaternion());
-                u = Float.floatToRawIntBits(-damageUV.getX());
-                v = Float.floatToRawIntBits(-damageUV.getY());
+                u = -damageUV.getX();
+                v = -damageUV.getY();
             } else {
                 u = Float.intBitsToFloat(data[i + 3]);
                 v = Float.intBitsToFloat(data[i + 4]);
             }
             self.colour(colors[i / 8]);
-            self.vertex(
-                    x + Float.intBitsToFloat(data[i]),
-                    y + Float.intBitsToFloat(data[i + 1]),
-                    z + Float.intBitsToFloat(data[i + 2]),
-                    u, v
-            );
+            self.vertex(vx, vy, vz, u, v);
         }
     }
 }
