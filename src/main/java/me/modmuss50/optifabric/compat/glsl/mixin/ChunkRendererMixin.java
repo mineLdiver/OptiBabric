@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(class_66.class)
 @InterceptingMixin("net/mine_diver/glsl/mixin/Mixinclass_66")
-public class ChunkRendererMixin {
+class ChunkRendererMixin {
     @Redirect(
             method = "updateRenderer",
             at = @At(

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ArsenicItemRenderer.class)
-public class ArsenicItemRendererMixin {
+class ArsenicItemRendererMixin {
     @Redirect(
             method = "renderModel",
             at = @At(

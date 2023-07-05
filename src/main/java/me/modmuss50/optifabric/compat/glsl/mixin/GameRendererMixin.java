@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(GameRenderer.class)
 @InterceptingMixin("net/mine_diver/glsl/mixin/MixinGameRenderer")
-public class GameRendererMixin {
+class GameRendererMixin {
     @Redirect(
             method = "delta",
             at = @At(

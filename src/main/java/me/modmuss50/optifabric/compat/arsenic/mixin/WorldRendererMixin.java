@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(WorldRenderer.class)
-public class WorldRendererMixin {
+class WorldRendererMixin {
     @Shadow private Level level;
 
     @Redirect(

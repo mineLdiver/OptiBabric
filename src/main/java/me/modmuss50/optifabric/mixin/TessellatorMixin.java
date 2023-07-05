@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Tessellator.class)
-public class TessellatorMixin implements OptifineTessellator {
+class TessellatorMixin implements OptifineTessellator {
     @Dynamic
     private boolean renderingChunk;
 

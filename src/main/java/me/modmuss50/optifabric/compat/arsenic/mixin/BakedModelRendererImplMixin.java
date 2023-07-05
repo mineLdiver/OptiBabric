@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static org.objectweb.asm.Opcodes.GETFIELD;
 
 @Mixin(BakedModelRendererImpl.class)
-public class BakedModelRendererImplMixin implements BakedModelRendererImplCompat {
+class BakedModelRendererImplMixin implements BakedModelRendererImplCompat {
     @Redirect(
             method = "*",
             at = @At(

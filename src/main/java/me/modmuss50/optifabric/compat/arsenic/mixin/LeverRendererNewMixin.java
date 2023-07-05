@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockRenderer.class)
 @InterceptingMixin("net/modificationstation/stationapi/mixin/arsenic/client/block/LeverRendererMixin")
-public class LeverRendererNewMixin {
+class LeverRendererNewMixin {
     @Shim
     private native void stationapi_lever_captureTexture(
             BlockBase block, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(WorldRenderer.class)
-public abstract class MixinWorldRenderer implements WorldRendererCompat {
+abstract class MixinWorldRenderer implements WorldRendererCompat {
     @Shadow public abstract int renderAllSortedRenderers(int par1, double par2);
 
     private int optifabric_num;

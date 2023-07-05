@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import static org.objectweb.asm.Opcodes.GETFIELD;
 
 @Mixin(ArsenicOverlayRenderer.class)
-public class ArsenicOverlayRendererMixin {
+class ArsenicOverlayRendererMixin {
     @Redirect(
             method = "renderItem(F)V",
             at = @At(

@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static org.objectweb.asm.Opcodes.GETFIELD;
 
 @Mixin(GameOptions.class)
-public abstract class GameOptionsMixin {
+abstract class GameOptionsMixin {
     @Unique
     private static final byte[] OPTIFABRIC$EMPTY_LIGHT = new byte[0];
 

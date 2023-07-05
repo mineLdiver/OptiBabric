@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.function.Function;
 
 @Mixin(ModMenu.class)
-public class ModMenuMixin {
+class ModMenuMixin {
     @Inject(
             method = "onInitializeClient",
             at = @At(

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockRenderer.class)
 @InterceptingMixin("net/modificationstation/stationapi/mixin/arsenic/client/block/BedRendererMixin")
-public class BedRendererNewMixin {
+class BedRendererNewMixin {
     @Shim
     private native void stationapi_bed_captureTexture1(
             BlockBase i, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,
