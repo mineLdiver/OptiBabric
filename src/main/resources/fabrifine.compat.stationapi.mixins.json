@@ -8,6 +8,7 @@
     "BakedModelRendererImplMixin",
     "BedRendererNewMixin",
     "FluidRendererNewMixin",
+    "GameOptionsMixin",
     "LeverRendererNewMixin",
     "StationTessellatorImplMixin"
   ]

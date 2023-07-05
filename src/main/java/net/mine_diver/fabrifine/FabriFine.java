@@ -12,14 +12,12 @@ import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.mine_diver.fabrifine.util.Edition;
+import net.mine_diver.fabrifine.util.MixinHelper;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
@@ -54,10 +52,6 @@ public class FabriFine implements Runnable {
 
     @Override
     public void run() {
-        if (isPresent("station-renderer-arsenic"))
-            Mixins.addConfiguration("fabrifine.compat.stationapi.mixins.json");
-        if (isPresent("glsl"))
-            Mixins.addConfiguration("fabrifine.compat.glsl.mixins.json");
         File ofFile = getRemappedOptifine();
         File mcFile = getLaunchMinecraftJar().toFile();
         try {
@@ -94,27 +88,32 @@ public class FabriFine implements Runnable {
                             }
                             if (skipCheck || mcNode.fields.stream().noneMatch(fieldNode -> ofField.name.equals(fieldNode.name))) {
                                 mcNode.fields.add(ofField);
-//                                MixinHelper.addFieldInfo(mcNode, ofField);
+                                MixinHelper.addFieldInfo(mcNode, ofField);
                             }
                         });
-//                        for (MethodNode ofMethod : ofNode.methods) {
-//                            Optional<MethodNode> mcMethodOptional = mcNode.methods.stream().filter(mcMethod -> ofMethod.name.equals(mcMethod.name) && ofMethod.desc.equals(mcMethod.desc)).findFirst();
-//                            if (mcMethodOptional.isPresent()) {
-//                                MethodNode mcMethod = mcMethodOptional.get();
-//                                if (!new MethodComparison(mcMethod, ofMethod).effectivelyEqual) {
-//                                    mcNode.methods.remove(mcMethod);
-//                                    mcNode.methods.add(ofMethod);
-//                                }
-//                            } else
-//                                mcNode.methods.add(ofMethod);
-//                        }
-                        mcNode.methods = ofNode.methods;
+                        for (MethodNode ofMethod : ofNode.methods) {
+                            Optional<MethodNode> mcMethodOptional = mcNode.methods.stream().filter(mcMethod -> ofMethod.name.equals(mcMethod.name) && ofMethod.desc.equals(mcMethod.desc)).findFirst();
+                            if (mcMethodOptional.isPresent()) {
+                                MethodNode mcMethod = mcMethodOptional.get();
+                                if (!new MethodComparison(mcMethod, ofMethod).effectivelyEqual) {
+                                    mcNode.methods.remove(mcMethod);
+                                    mcNode.methods.add(ofMethod);
+                                }
+                            } else {
+                                mcNode.methods.add(ofMethod);
+                                MixinHelper.addMethodInfo(mcNode, ofMethod);
+                            }
+                        }
                     });
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        if (isPresent("station-renderer-arsenic"))
+            Mixins.addConfiguration("fabrifine.compat.stationapi.mixins.json");
+        if (isPresent("glsl"))
+            Mixins.addConfiguration("fabrifine.compat.glsl.mixins.json");
     }
 
     private static boolean isPresent(String modID) {
