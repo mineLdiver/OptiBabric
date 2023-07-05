@@ -3,6 +3,9 @@ package net.mine_diver.fabrifine;
 import com.chocohead.mm.api.ClassTinkerers;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.launch.common.FabricLauncherBase;
 import net.fabricmc.mapping.tree.ClassDef;
 import net.fabricmc.mapping.tree.FieldDef;
@@ -11,6 +14,8 @@ import net.fabricmc.mapping.tree.TinyTree;
 import net.fabricmc.tinyremapper.IMappingProvider;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
+import net.mine_diver.fabrifine.patcher.metadata.OptifineContainer;
+import net.mine_diver.fabrifine.patcher.metadata.OptifineIcon;
 import net.mine_diver.fabrifine.util.Edition;
 import net.mine_diver.fabrifine.util.MixinHelper;
 import org.apache.commons.io.IOUtils;
@@ -20,10 +25,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.Mixins;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,13 +35,12 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class FabriFine implements Runnable {
 
@@ -49,16 +50,26 @@ public class FabriFine implements Runnable {
         if (!WORK_DIR.exists() && ! WORK_DIR.mkdirs()) throw new RuntimeException("Couldn't create " + WORK_DIR + "!");
     }
     public static Edition EDITION;
+    public static String VERSION;
 
     @Override
     public void run() {
         File ofFile = getRemappedOptifine();
         File mcFile = getLaunchMinecraftJar().toFile();
+
         try {
             ClassTinkerers.addURL(ofFile.toURI().toURL());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+
+        try {
+            //noinspection unchecked
+            ((List<ModContainer>) (List<? extends ModContainer>) FabricLoaderImpl.InitHelper.get().getModsInternal()).add(new OptifineContainer(ofFile.toPath(), Version.parse(VERSION)));
+        } catch (VersionParsingException e) {
+            throw new RuntimeException(e);
+        }
+
         try (ZipFile ofZip = new ZipFile(ofFile); ZipFile mcZip = new ZipFile(mcFile)) {
             Enumeration<? extends ZipEntry> entries = ofZip.entries();
             while (entries.hasMoreElements()) {
@@ -114,6 +125,8 @@ public class FabriFine implements Runnable {
             Mixins.addConfiguration("fabrifine.compat.stationapi.mixins.json");
         if (isPresent("glsl"))
             Mixins.addConfiguration("fabrifine.compat.glsl.mixins.json");
+        if (isPresent("modmenu"))
+            Mixins.addConfiguration("fabrifine.compat.modmenu.mixins.json");
     }
 
     private static boolean isPresent(String modID) {
@@ -140,10 +153,50 @@ public class FabriFine implements Runnable {
                 }
                 createMappings("client", FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace()).load(out);
             });
+            addIcon(remappedOfFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return remappedOfFile;
+    }
+
+    private static void addIcon(File zipFile) {
+        File tempFile;
+        try {
+            tempFile = File.createTempFile(zipFile.getName(), null);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        tempFile.delete();
+
+        boolean renameOk = zipFile.renameTo(tempFile);
+        if (!renameOk)
+            throw new RuntimeException("Could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
+        byte[] buf = new byte[1024];
+
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
+            try (ZipInputStream zin = new ZipInputStream(new FileInputStream(tempFile))) {
+                ZipEntry entry = zin.getNextEntry();
+                while (entry != null) {
+                    String name = entry.getName();
+                    out.putNextEntry(new ZipEntry(name));
+                    int len;
+                    while ((len = zin.read(buf)) > 0)
+                        out.write(buf, 0, len);
+                    entry = zin.getNextEntry();
+                }
+            }
+            try (InputStream in = new ByteArrayInputStream(Base64.getDecoder().decode(OptifineIcon.DATA))) {
+                out.putNextEntry(new ZipEntry("assets/optifine/icon.png"));
+                int len;
+                while ((len = in.read(buf)) > 0)
+                    out.write(buf, 0, len);
+                out.closeEntry();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        tempFile.delete();
     }
 
     private static File findOptifine() {
@@ -157,8 +210,11 @@ public class FabriFine implements Runnable {
                     ClassNode configNode = new ClassNode();
                     ClassReader configReader = new ClassReader(IOUtils.toByteArray(configStream));
                     configReader.accept(configNode, 0);
-                    EDITION = Edition.fromVersion((String) StreamSupport.stream(configNode.methods.stream().filter(methodNode -> "getVersion".equals(methodNode.name)).findFirst().orElseThrow(NullPointerException::new).instructions.spliterator(), false).filter(abstractInsnNode -> AbstractInsnNode.LDC_INSN == abstractInsnNode.getType()).map(abstractInsnNode -> (LdcInsnNode) abstractInsnNode).findFirst().orElseThrow(NullPointerException::new).cst);
+                    Edition.EditionAndVersion editionAndVersion = Edition.fromVersion((String) StreamSupport.stream(configNode.methods.stream().filter(methodNode -> "getVersion".equals(methodNode.name)).findFirst().orElseThrow(NullPointerException::new).instructions.spliterator(), false).filter(abstractInsnNode -> AbstractInsnNode.LDC_INSN == abstractInsnNode.getType()).map(abstractInsnNode -> (LdcInsnNode) abstractInsnNode).findFirst().orElseThrow(NullPointerException::new).cst);
+                    EDITION = editionAndVersion.edition();
+                    VERSION = editionAndVersion.version();
                     LOGGER.info("Edition detected: " + EDITION.name());
+                    LOGGER.info("Version detected: " + VERSION);
                     return file;
                 }
             } catch (IOException e) {

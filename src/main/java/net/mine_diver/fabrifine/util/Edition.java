@@ -8,23 +8,28 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public enum Edition {
-    STANDARD("HD"),
-    SMOOTH("HD_S"),
-    MULTITHREADED("HD_MT"),
-    ANTIALIASING("HD_AA");
+    STANDARD("HD", "Standard"),
+    SMOOTH("HD_S", "Smooth"),
+    MULTITHREADED("HD_MT", "Multi-Core"),
+    ANTIALIASING("HD_AA", "AA");
 
     public final String id;
+    public final String canonName;
 
-    private Edition(String id) {
+    Edition(String id, String canonName) {
         this.id = id;
+        this.canonName = canonName;
     }
 
-    public static Edition fromVersion(String version) {
+    public record EditionAndVersion(Edition edition, String version) {}
+
+    public static EditionAndVersion fromVersion(String version) {
         String editionAndVersion = version.substring("OptiFine_1.7.3_".length());
         Set<Edition> matches = Arrays.stream(values()).filter(edition -> editionAndVersion.startsWith(edition.id)).collect(Collectors.toCollection(() -> EnumSet.noneOf(Edition.class)));
         if (matches.size() == 0) throw new IllegalStateException("Unknown OptiFine edition: " + version);
         if (matches.size() > 1) matches.remove(STANDARD);
-        return Iterables.getOnlyElement(matches);
+        Edition edition = Iterables.getOnlyElement(matches);
+        return new EditionAndVersion(edition, editionAndVersion.substring(edition.id.length() + 1));
     }
 
     @Override
