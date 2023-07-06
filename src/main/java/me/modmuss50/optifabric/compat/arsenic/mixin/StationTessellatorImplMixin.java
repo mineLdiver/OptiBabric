@@ -1,6 +1,5 @@
 package me.modmuss50.optifabric.compat.arsenic.mixin;
 
-import me.modmuss50.optifabric.patcher.OptifineTessellator;
 import net.minecraft.client.render.Tessellator;
 import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
 import net.modificationstation.stationapi.api.util.math.Direction;
@@ -36,14 +35,14 @@ class StationTessellatorImplMixin {
 
     @Mutable
     @Unique
-    private @Final OptifineTessellator optifabric_selfOF;
+    private @Final TessellatorOF optifabric_selfOF;
 
     @Inject(
             method = "<init>",
             at = @At("RETURN")
     )
     private void optifabric_init(Tessellator tessellator, CallbackInfo ci) {
-        optifabric_selfOF = (OptifineTessellator) self;
+        optifabric_selfOF = (TessellatorOF) self;
     }
 
     /**
@@ -54,7 +53,7 @@ class StationTessellatorImplMixin {
     public void quad(BakedQuad quad, float x, float y, float z, int colour0, int colour1, int colour2, int colour3, float normalX, float normalY, float normalZ, boolean spreadUV) {
         int[] data = quad.getVertexData();
         int[] colors = new int[] { colour0, colour1, colour2, colour3 };
-        if (!optifabric_selfOF.isRenderingChunk())
+        if (!optifabric_selfOF.optifabric_isRenderingChunk())
             self.setNormal(normalX, normalY, normalZ);
         Direction facing = quad.getFace();
         Matrix4f texture = Matrix4f.translateTmp((float) access.getXOffset(), (float) access.getYOffset(), (float) access.getZOffset());

@@ -3,8 +3,6 @@
   "package": "me.modmuss50.optifabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "TessellatorAccessor",
-    "TessellatorMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
