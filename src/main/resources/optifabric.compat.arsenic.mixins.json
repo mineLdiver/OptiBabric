@@ -10,11 +10,7 @@
     "BakedModelRendererImplMixin",
     "BedRendererNewMixin",
     "FluidRendererNewMixin",
-    "GameOptionsMixin",
     "LeverRendererNewMixin",
-    "StationTessellatorImplMixin",
-    "TessellatorOF",
-    "TextureHDFXMixin",
     "TextureManagerMixin",
     "TextureManagerOF",
     "WorldRendererMixin"

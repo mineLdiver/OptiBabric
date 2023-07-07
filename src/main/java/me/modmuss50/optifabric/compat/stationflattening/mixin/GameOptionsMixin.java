@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.compat.arsenic.mixin;
+package me.modmuss50.optifabric.compat.stationflattening.mixin;
 
 import net.minecraft.class_257;
 import net.minecraft.client.options.GameOptions;

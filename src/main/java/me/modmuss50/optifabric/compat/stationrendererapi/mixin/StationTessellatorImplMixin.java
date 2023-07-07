@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.compat.arsenic.mixin;
+package me.modmuss50.optifabric.compat.stationrendererapi.mixin;
 
 import net.minecraft.client.render.Tessellator;
 import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// TODO: come up with a better quad() method and move this to station-renderer-api-v0 compat
+// TODO: come up with a better quad() method
 @Mixin(StationTessellatorImpl.class)
 class StationTessellatorImplMixin {
     @Shadow @Final private Tessellator self;

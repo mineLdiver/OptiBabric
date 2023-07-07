@@ -54,7 +54,7 @@ class OptifineMetadata implements ModMetadata {
 
     @Override
     public String getDescription() {
-        return "OptiFine is a Minecraft optimization mod. It allows Minecraft to run faster and look better with full support for shaders, HD textures and many configuration options.";
+        return "Chasing the Minecraft Performance. This mod adds support for HD textures and a lot of options for better looks and performance. Doubling the FPS is common.";
     }
 
     @Override

@@ -124,12 +124,14 @@ public class OptifabricSetup implements Runnable {
         }
         if (isPresent("station-renderer-arsenic"))
             Mixins.addConfiguration("optifabric.compat.arsenic.mixins.json");
-        if (isPresent("station-renderer-api-v0"))
-            Mixins.addConfiguration("optifabric.compat.station-renderer-api-v0.mixins.json");
         if (isPresent("glsl"))
             Mixins.addConfiguration("optifabric.compat.glsl.mixins.json");
         if (isPresent("modmenu"))
             Mixins.addConfiguration("optifabric.compat.modmenu.mixins.json");
+        if (isPresent("station-flattening-v0"))
+            Mixins.addConfiguration("optifabric.compat.station-flattening-v0.mixins.json");
+        if (isPresent("station-renderer-api-v0"))
+            Mixins.addConfiguration("optifabric.compat.station-renderer-api-v0.mixins.json");
     }
 
     private static boolean isPresent(String modID) {

@@ -2,6 +2,9 @@
   "parent": "optifabric.mixins.json",
   "package": "me.modmuss50.optifabric.compat.stationrendererapi.mixin",
   "client": [
+    "StationTessellatorImplMixin",
+    "TessellatorOF",
+    "TextureHDFXMixin",
     "TextureManagerOF",
     "TextureUtilMixin"
   ]

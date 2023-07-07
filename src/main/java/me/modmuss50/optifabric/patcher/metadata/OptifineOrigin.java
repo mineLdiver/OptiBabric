@@ -5,16 +5,16 @@ import net.fabricmc.loader.api.metadata.ModOrigin;
 interface OptifineOrigin extends ModOrigin {
     @Override
     default Kind getKind() {
-        return Kind.PATH;
+        return Kind.UNKNOWN;
     }
 
     @Override
     default String getParentModId() {
-        throw new UnsupportedOperationException("kind " + Kind.PATH.name() + " doesn't have a parent mod");
+        return "optifabric";
     }
 
     @Override
     default String getParentSubLocation() {
-        throw new UnsupportedOperationException("kind " + Kind.PATH.name() + " doesn't have a parent sub-location");
+        throw new UnsupportedOperationException("kind " + getKind().name() + " doesn't have a parent sub-location");
     }
 }

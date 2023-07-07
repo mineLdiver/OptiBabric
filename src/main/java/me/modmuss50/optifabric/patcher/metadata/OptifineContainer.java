@@ -23,7 +23,6 @@ public class OptifineContainer implements ModContainer {
         }
         rootPaths = new ArrayList<>();
         rootPaths.add(this.ofPath);
-        rootPaths.addAll(FabricLoader.getInstance().getModContainer("optifabric").orElseThrow().getRootPaths());
         this.ofMetadata = new OptifineMetadata(version);
     }
 
@@ -44,7 +43,7 @@ public class OptifineContainer implements ModContainer {
 
     @Override
     public Optional<ModContainer> getContainingMod() {
-        return Optional.empty();
+        return FabricLoader.getInstance().getModContainer("optifabric");
     }
 
     @Override

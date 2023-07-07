@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.compat.arsenic.mixin;
+package me.modmuss50.optifabric.compat.stationrendererapi.mixin;
 
 import net.minecraft.client.render.TextureBinder;
 import net.modificationstation.stationapi.api.client.texture.atlas.Atlas;
@@ -6,8 +6,6 @@ import net.modificationstation.stationapi.api.client.texture.atlas.Atlases;
 import net.modificationstation.stationapi.api.client.texture.binder.StaticReferenceProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
-
-;
 
 @Pseudo
 @Mixin(targets = {
