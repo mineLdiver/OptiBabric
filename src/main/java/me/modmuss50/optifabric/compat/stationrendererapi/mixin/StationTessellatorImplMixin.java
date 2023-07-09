@@ -1,5 +1,6 @@
 package me.modmuss50.optifabric.compat.stationrendererapi.mixin;
 
+import me.modmuss50.optifabric.compat.stationrendererapi.TessellatorOF;
 import net.minecraft.client.render.Tessellator;
 import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
 import net.modificationstation.stationapi.api.util.math.Direction;
@@ -8,10 +9,10 @@ import net.modificationstation.stationapi.api.util.math.Vec3f;
 import net.modificationstation.stationapi.api.util.math.Vector4f;
 import net.modificationstation.stationapi.impl.client.render.StationTessellatorImpl;
 import net.modificationstation.stationapi.mixin.render.client.TessellatorAccessor;
-import org.spongepowered.asm.mixin.*;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
 // TODO: come up with a better quad() method
 @Mixin(StationTessellatorImpl.class)
@@ -34,27 +35,15 @@ class StationTessellatorImplMixin {
 
     @Shadow @Final private Vector4f damageUV;
 
-    @Mutable
-    @Unique
-    private @Final TessellatorOF optifabric_selfOF;
-
-    @Inject(
-            method = "<init>",
-            at = @At("RETURN")
-    )
-    private void optifabric_init(Tessellator tessellator, CallbackInfo ci) {
-        optifabric_selfOF = (TessellatorOF) self;
-    }
-
     /**
      * @author mine_diver
      * @reason temporary workaround
      */
-    @Overwrite
+    @Overwrite(remap = false)
     public void quad(BakedQuad quad, float x, float y, float z, int colour0, int colour1, int colour2, int colour3, float normalX, float normalY, float normalZ, boolean spreadUV) {
         int[] data = quad.getVertexData();
         int[] colors = new int[] { colour0, colour1, colour2, colour3 };
-        if (!optifabric_selfOF.optifabric_isRenderingChunk())
+        if (!((TessellatorOF) self).optifabric_isRenderingChunk())
             self.setNormal(normalX, normalY, normalZ);
         Direction facing = quad.getFace();
         Matrix4f texture = Matrix4f.translateTmp((float) access.getXOffset(), (float) access.getYOffset(), (float) access.getZOffset());

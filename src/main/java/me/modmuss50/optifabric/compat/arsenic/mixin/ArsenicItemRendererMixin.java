@@ -8,6 +8,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.Objects;
+
 @Mixin(ArsenicItemRenderer.class)
 class ArsenicItemRendererMixin {
     @Redirect(
@@ -19,6 +21,6 @@ class ArsenicItemRendererMixin {
             )
     )
     private void optifabric_deferStart(Tessellator instance) {
-        ((BakedModelRendererImplCompat) RendererAccess.INSTANCE.getRenderer().bakedModelRenderer()).optifabric_deferItemStart();
+        ((BakedModelRendererImplCompat) Objects.requireNonNull(RendererAccess.INSTANCE.getRenderer()).bakedModelRenderer()).optifabric_deferItemStart();
     }
 }

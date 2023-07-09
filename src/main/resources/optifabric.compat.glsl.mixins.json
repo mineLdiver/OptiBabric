@@ -8,5 +8,6 @@
     "GameRendererMixin",
     "MixinWorldRenderer",
     "TessellatorMixin"
-  ]
+  ],
+  "refmap": "OptiFabric-refmap.json"
 }

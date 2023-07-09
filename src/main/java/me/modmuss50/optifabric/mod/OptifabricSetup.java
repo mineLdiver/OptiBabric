@@ -2,6 +2,7 @@ package me.modmuss50.optifabric.mod;
 
 import com.chocohead.mm.api.ClassTinkerers;
 import me.modmuss50.optifabric.patcher.MethodComparison;
+import me.modmuss50.optifabric.patcher.fixes.OptifineFixer;
 import me.modmuss50.optifabric.patcher.metadata.OptifineContainer;
 import me.modmuss50.optifabric.patcher.metadata.OptifineIcon;
 import me.modmuss50.optifabric.util.Edition;
@@ -81,6 +82,12 @@ public class OptifabricSetup implements Runnable {
                     ClassNode ofNode = new ClassNode();
                     new ClassReader(IOUtils.toByteArray(ofZip.getInputStream(entry))).accept(ofNode, ClassReader.EXPAND_FRAMES);
                     ClassTinkerers.addReplacement(className, mcNode -> {
+                        // Skip applying class patches we veto
+                        if (OptifineFixer.INSTANCE.shouldSkip(mcNode.name)) return;
+
+                        // Patch the class if required
+                        OptifineFixer.INSTANCE.getFixers(mcNode.name).forEach(classFixer -> classFixer.fix(ofNode, mcNode));
+
                         ofNode.fields.forEach(ofField -> {
                             Optional<FieldNode> mcFieldNode = mcNode.fields.stream().filter(fieldNode -> ofField.name.equals(fieldNode.name)).findFirst();
                             boolean fieldPresent = mcFieldNode.isPresent();
@@ -262,7 +269,12 @@ public class OptifabricSetup implements Runnable {
                 try {
                     rawName = classDef.getRawName(from);
                     if (rawName.isEmpty()) continue; // we don't need definitions from other namespaces, so skipping the "namespace--" loop is necessary
-                } catch (ArrayIndexOutOfBoundsException ignored) {}
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    try {
+                        classDef.getRawName("glue"); // if the name isn't intermediary only, skip
+                        continue;
+                    } catch (ArrayIndexOutOfBoundsException ignored) {}
+                }
                 String className = classDef.getName(from);
                 out.acceptClass(className, classDef.getName(to));
 

@@ -14,7 +14,8 @@ class ArsenicTextureManagerMixin {
     @Inject(
             method = "getTextureId",
             at = @At("HEAD"),
-            cancellable = true
+            cancellable = true,
+            remap = false
     )
     private void optifabric_forceLegacyAtlases(String par1, CallbackInfoReturnable<Integer> cir, CallbackInfo ci) {
         if (ArsenicTextureManagerCompat.forceCompatibility)

@@ -3,5 +3,6 @@
   "package": "me.modmuss50.optifabric.compat.stationflattening.mixin",
   "client": [
     "GameOptionsMixin"
-  ]
+  ],
+  "refmap": "OptiFabric-refmap.json"
 }

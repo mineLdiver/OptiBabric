@@ -1,0 +1,5 @@
+accessWidener	v2	named
+
+# Access fixes for OptiFine
+accessible	field	net/minecraft/client/gui/widgets/Button	width	I
+accessible	field	net/minecraft/client/gui/widgets/Button	height	I

@@ -1,5 +1,6 @@
 package me.modmuss50.optifabric.compat.stationrendererapi.mixin;
 
+import me.modmuss50.optifabric.compat.stationrendererapi.TextureManagerOF;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.modificationstation.stationapi.api.client.texture.NativeImage;
@@ -11,14 +12,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.*;
 
-@Mixin(
-        value = TextureUtil.class,
-        remap = false
-)
+@Mixin(TextureUtil.class)
 class TextureUtilMixin {
     @Inject(
             method = "prepareImage(Lnet/modificationstation/stationapi/api/client/texture/NativeImage$InternalFormat;IIII)V",
-            at = @At("HEAD")
+            at = @At("HEAD"),
+            remap = false
     )
     private static void optifabric_informOptifineOfDimensions(NativeImage.InternalFormat internalFormat, int id, int maxLevel, int width, int height, CallbackInfo ci) {
         //noinspection deprecation

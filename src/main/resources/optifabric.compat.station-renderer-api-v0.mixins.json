@@ -3,9 +3,10 @@
   "package": "me.modmuss50.optifabric.compat.stationrendererapi.mixin",
   "client": [
     "StationTessellatorImplMixin",
-    "TessellatorOF",
+    "TessellatorMixin",
     "TextureHDFXMixin",
-    "TextureManagerOF",
+    "TextureManagerMixin",
     "TextureUtilMixin"
-  ]
+  ],
+  "refmap": "OptiFabric-refmap.json"
 }

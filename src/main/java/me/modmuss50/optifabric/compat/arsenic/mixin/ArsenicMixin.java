@@ -13,7 +13,8 @@ class ArsenicMixin {
     @Inject(
             method = "registerTextures",
             at = @At("HEAD"),
-            cancellable = true
+            cancellable = true,
+            remap = false
     )
     private static void optifabric_disableArsenicBinders(TextureRegisterEvent event, CallbackInfo ci) {
         ci.cancel();
@@ -21,7 +22,8 @@ class ArsenicMixin {
 
     @Inject(
             method = "beforeTexturePackApplied",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            remap = false
     )
     private static void optifabric_informOptifineOfClearedBinders(TexturePackLoadedEvent.Before event, CallbackInfo ci) {
         ((TextureManagerOF) event.textureManager).optifabric_setHdTexturesInstalled(false);

@@ -14,5 +14,6 @@
     "TextureManagerMixin",
     "TextureManagerOF",
     "WorldRendererMixin"
-  ]
+  ],
+  "refmap": "OptiFabric-refmap.json"
 }

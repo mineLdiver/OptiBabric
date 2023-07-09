@@ -3,5 +3,6 @@
   "package": "me.modmuss50.optifabric.compat.modmenu.mixin",
   "client": [
     "ModMenuMixin"
-  ]
+  ],
+  "refmap": "OptiFabric-refmap.json"
 }

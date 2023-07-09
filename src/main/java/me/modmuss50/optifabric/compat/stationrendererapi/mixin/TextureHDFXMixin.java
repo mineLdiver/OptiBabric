@@ -8,17 +8,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 
 @Pseudo
-@Mixin(targets = {
-        "net.optifine.TextureHDCompassFX",
-        "net.optifine.TextureHDFlamesFX",
-        "net.optifine.TextureHDLavaFlowFX",
-        "net.optifine.TextureHDLavaFX",
-        "net.optifine.TextureHDPortalFX",
-        "net.optifine.TextureHDWatchFX",
-        "net.optifine.TextureHDWaterFlowFX",
-        "net.optifine.TextureHDWatchFX",
-        "net.optifine.TextureHDWaterFX"
-})
+@Mixin(
+        targets = {
+                "net.optifine.TextureHDCompassFX",
+                "net.optifine.TextureHDFlamesFX",
+                "net.optifine.TextureHDLavaFlowFX",
+                "net.optifine.TextureHDLavaFX",
+                "net.optifine.TextureHDPortalFX",
+                "net.optifine.TextureHDWatchFX",
+                "net.optifine.TextureHDWaterFlowFX",
+                "net.optifine.TextureHDWatchFX",
+                "net.optifine.TextureHDWaterFX",
+        }
+)
 class TextureHDFXMixin extends TextureBinder implements StaticReferenceProvider {
     TextureHDFXMixin(int i) {
         super(i);
