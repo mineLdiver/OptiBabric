@@ -1,0 +1,9 @@
+{
+  "parent": "optifabric.mixins.json",
+  "package": "me.modmuss50.optifabric.compat.bnb.mixin",
+  "plugin": "me.modmuss50.optifabric.compat.bnb.BetterNetherBetaMixinPlugin",
+  "client": [
+    "GameRendererMixin"
+  ],
+  "refmap": "OptiFabric-refmap.json"
+}

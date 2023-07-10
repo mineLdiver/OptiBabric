@@ -139,6 +139,8 @@ public class OptifabricSetup implements Runnable {
             Mixins.addConfiguration("optifabric.compat.station-flattening-v0.mixins.json");
         if (isPresent("station-renderer-api-v0"))
             Mixins.addConfiguration("optifabric.compat.station-renderer-api-v0.mixins.json");
+        if (isPresent("bnb"))
+            Mixins.addConfiguration("optifabric.compat.bnb.mixins.json");
     }
 
     private static boolean isPresent(String modID) {
