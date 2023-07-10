@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
 @InterceptingMixin("paulevs/bnb/mixin/client/GameRendererMixin")
-public class GameRendererMixin {
+class GameRendererMixin {
     @Inject(
             method = "method_1842",
             at = @At(

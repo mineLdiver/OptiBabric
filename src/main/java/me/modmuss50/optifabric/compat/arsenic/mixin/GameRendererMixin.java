@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(GameRenderer.class)
-public class GameRendererMixin {
+class GameRendererMixin {
     @Redirect(
             method = "method_1844",
             at = @At(
