@@ -8,9 +8,10 @@
     "ArsenicOverlayRendererMixin",
     "ArsenicTextureManagerMixin",
     "BakedModelRendererImplMixin",
-    "BedRendererNewMixin",
-    "FluidRendererNewMixin",
-    "LeverRendererNewMixin",
+    "BedRendererMixin",
+    "FluidRendererMixin",
+    "GameRendererMixin",
+    "LeverRendererMixin",
     "TextureManagerMixin",
     "TextureManagerOF",
     "WorldRendererMixin"

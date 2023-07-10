@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockRenderer.class)
 @InterceptingMixin("net/modificationstation/stationapi/mixin/arsenic/client/block/FluidRendererMixin")
-class FluidRendererNewMixin {
+class FluidRendererMixin {
     @Shim
     private native void stationapi_fluid_captureTexture1(
             BlockBase block, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,

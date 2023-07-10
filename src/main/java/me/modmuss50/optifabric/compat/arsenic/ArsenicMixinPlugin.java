@@ -12,7 +12,7 @@ public class ArsenicMixinPlugin extends InterceptingMixinPlugin {
     @Override
     public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
         switch (mixinInfo.getName()) {
-            case "BedRendererNewMixin" -> {
+            case "BedRendererMixin" -> {
                 String renderBedDesc = "(Lnet/minecraft/class_17;III)Z"; // boolean (Block, int, int, int)
                 String renderBed = RemappingUtils.getMethodName("class_13", "method_81", renderBedDesc); // BlockRenderer, renderBed
                 renderBedDesc = RemappingUtils.mapMethodDescriptor(renderBedDesc);
