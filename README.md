@@ -1,17 +1,40 @@
-# Fabric Example Mod with StationAPI and BIN Mappings for beta 1.7.3 server + client
+# OptiBabric (b1.7.3)
 
-## Setup
+This is an OptiFabric fork for Minecraft Beta 1.7.3 and a Fabric fork named Babric.
 
-[See the StationAPI wiki.](https://github.com/ModificationStation/StationAPI/wiki)
+__Note:__ This project is not related or supported by either Fabric or Optifine.
 
-## Common Issues
+__Note:__ This project does not contain Optifine, you must download it separately!
 
-**I get "Invalid source release: 17" as an error!**  
-Use Java 17. Open up `File > Project Structure` and change your SDK to Java 17.  
-If you still get the issue, you may need to go into `File > Settings > Build, Execution, Deployment > Build Tools > Gradle` and change the Java that Gradle uses too.
+## Installing
 
-[Here for more issues.](https://github.com/calmilamsy/BIN-fabric-example-mod#common-issues)
+- Install [Babric](https://github.com/babric/prism-instance) in a launcher of your choice that supports MultiMC format instances
+- Navigate to [OptiFine History](https://www.minecraftforum.net/forums/mapping-and-modding-java-edition/minecraft-mods/1286605-b1-4-1-9-optifine-history)
+- Expand `Minecraft Beta 1.7.3` spoiler
+- Choose an edition supported by OptiBabric
+- Use the `Download, Mirror` buttons. (__Do not__ use `Download 1, Download 2`, those are very likely to be dead for all editions)
+- [Optional] Apply the [long distance patch](EDITIONS.md#bugs) to the downloaded zip
+- Put the zip in Mods section in your Babric instance settings (or the mods folder), __NOT__ the minecraft.jar
+- Download OptiBabric and put it in mods as well
 
-## License
+During the first launch, OptiBabric will find and transform the OptiFine zip to be compatible with Fabric.
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This transformed version can be found at `.minecraft/.optifabric/optifine-remapped.jar`, but in most cases you don't need to touch it.
+
+OptiBabric will detect if OptiFine was replaced with another edition and will rerun the procedure automatically.
+
+## Tested and supported editions
+
+- HD G
+- HD S G
+- HD MT G2
+- HD MT G2 + Long Distance Patch 1.1
+- HD AA G5 (without StationAPI)
+
+[More information on editions](EDITIONS.md)
+
+## Notes on compatibility
+
+Since this is a fork of OptiFabric, it works similarly, and as such is __not__ automatically compatible with every mod.
+
+If you find a compatibility issue, report to [issues](https://github.com/mineLdiver/OptiBabric/issues)
