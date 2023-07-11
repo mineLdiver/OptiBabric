@@ -11,8 +11,9 @@
     "mine_diver"
   ],
   "contact": {
-    "homepage": "https://glass-launcher.net/",
-    "sources": "https://github.com/calmilamsy/BIN-fabric-example-mod"
+    "homepage": "https://modrinth.com/mod/optibabric",
+    "sources": "https://github.com/mineLdiver/OptiBabric",
+    "issues": "https://github.com/mineLdiver/OptiBabric/issues"
   },
 
   "license": "MPL-2.0",

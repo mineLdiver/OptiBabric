@@ -4,5 +4,5 @@
   "client": [
     "ModMenuMixin"
   ],
-  "refmap": "OptiFabric-refmap.json"
+  "refmap": "optibabric-refmap.json"
 }

@@ -9,5 +9,5 @@
     "MixinWorldRenderer",
     "TessellatorMixin"
   ],
-  "refmap": "OptiFabric-refmap.json"
+  "refmap": "optibabric-refmap.json"
 }
