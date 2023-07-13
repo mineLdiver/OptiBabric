@@ -1,0 +1,14 @@
+{
+  "parent": "optifabric.mixins.json",
+  "package": "me.modmuss50.optifabric.compat.smoothbeta.mixin",
+  "plugin": "me.modmuss50.optifabric.compat.smoothbeta.SmoothBetaMixinPlugin",
+  "client": [
+    "ChunkRendererMixin",
+    "TessellatorMixin",
+    "WorldRendererMixin"
+  ],
+  "refmap": "optibabric-refmap.json",
+  "mixins": [
+    "StationTessellatorImplMixin"
+  ]
+}

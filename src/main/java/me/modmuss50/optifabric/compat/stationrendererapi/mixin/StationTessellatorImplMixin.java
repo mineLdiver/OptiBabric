@@ -1,6 +1,7 @@
 package me.modmuss50.optifabric.compat.stationrendererapi.mixin;
 
 import me.modmuss50.optifabric.compat.stationrendererapi.TessellatorOF;
+import net.minecraft.class_214;
 import net.minecraft.client.render.Tessellator;
 import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
 import net.modificationstation.stationapi.api.util.math.Direction;
@@ -13,6 +14,10 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import java.nio.ByteBuffer;
+
+import static net.modificationstation.stationapi.impl.client.texture.StationRenderImpl.LOGGER;
 
 // TODO: come up with a better quad() method
 @Mixin(StationTessellatorImpl.class)
@@ -65,6 +70,22 @@ class StationTessellatorImplMixin {
             }
             self.colour(colors[i / 8]);
             self.vertex(vx, vy, vz, u, v);
+        }
+    }
+
+    /**
+     * @author mine_diver
+     * @reason early version
+     */
+    @Overwrite
+    public void ensureBufferCapacity(int criticalCapacity) {
+        if (access.stationapi$getBufferPosition() >= access.stationapi$getBufferSize() - criticalCapacity) {
+            LOGGER.info("Tessellator is nearing its maximum capacity. Increasing the buffer size from {} to {}", access.stationapi$getBufferSize(), access.stationapi$getBufferSize() * 2);
+            access.stationapi$setBufferSize(access.stationapi$getBufferSize() * 2);
+            ByteBuffer newBuffer = class_214.method_744(access.stationapi$getBufferSize() * 4);
+            access.stationapi$setByteBuffer(newBuffer);
+            access.stationapi$setIntBuffer(newBuffer.asIntBuffer());
+            access.stationapi$setFloatBuffer(newBuffer.asFloatBuffer());
         }
     }
 }

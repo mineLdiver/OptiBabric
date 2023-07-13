@@ -141,9 +141,11 @@ public class OptifabricSetup implements Runnable {
             Mixins.addConfiguration("optifabric.compat.station-renderer-api-v0.mixins.json");
         if (isPresent("bnb"))
             Mixins.addConfiguration("optifabric.compat.bnb.mixins.json");
+        if (isPresent("smoothbeta"))
+            Mixins.addConfiguration("optifabric.compat.smoothbeta.mixins.json");
     }
 
-    private static boolean isPresent(String modID) {
+    public static boolean isPresent(String modID) {
         return FabricLoader.getInstance().isModLoaded(modID);
     }
 
