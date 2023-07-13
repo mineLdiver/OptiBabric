@@ -1,7 +1,6 @@
 package me.modmuss50.optifabric.compat.stationrendererapi.mixin;
 
 import me.modmuss50.optifabric.compat.stationrendererapi.TessellatorOF;
-import net.minecraft.class_214;
 import net.minecraft.client.render.Tessellator;
 import net.modificationstation.stationapi.api.client.render.model.BakedQuad;
 import net.modificationstation.stationapi.api.util.math.Direction;
@@ -14,10 +13,13 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.nio.ByteBuffer;
-
-import static net.modificationstation.stationapi.impl.client.texture.StationRenderImpl.LOGGER;
 
 // TODO: come up with a better quad() method
 @Mixin(StationTessellatorImpl.class)
@@ -73,19 +75,47 @@ class StationTessellatorImplMixin {
         }
     }
 
-    /**
-     * @author mine_diver
-     * @reason early version
-     */
-    @Overwrite
-    public void ensureBufferCapacity(int criticalCapacity) {
-        if (access.stationapi$getBufferPosition() >= access.stationapi$getBufferSize() - criticalCapacity) {
-            LOGGER.info("Tessellator is nearing its maximum capacity. Increasing the buffer size from {} to {}", access.stationapi$getBufferSize(), access.stationapi$getBufferSize() * 2);
-            access.stationapi$setBufferSize(access.stationapi$getBufferSize() * 2);
-            ByteBuffer newBuffer = class_214.method_744(access.stationapi$getBufferSize() * 4);
-            access.stationapi$setByteBuffer(newBuffer);
-            access.stationapi$setIntBuffer(newBuffer.asIntBuffer());
-            access.stationapi$setFloatBuffer(newBuffer.asFloatBuffer());
-        }
+    @Redirect(
+            method = "ensureBufferCapacity",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Ljava/util/Arrays;copyOf([II)[I"
+            )
+    )
+    private int[] optifabric_stopCallingArraysCopyOf(int[] original, int newLength) {
+        return null;
+    }
+
+    @Redirect(
+            method = "ensureBufferCapacity",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/modificationstation/stationapi/mixin/render/client/TessellatorAccessor;stationapi$setBufferArray([I)V"
+            )
+    )
+    private void optifabric_stopSettingBufferArray(TessellatorAccessor instance, int[] ints) {}
+
+    @Inject(
+            method = "ensureBufferCapacity",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/modificationstation/stationapi/mixin/render/client/TessellatorAccessor;stationapi$setByteBuffer(Ljava/nio/ByteBuffer;)V"
+            ),
+            locals = LocalCapture.CAPTURE_FAILHARD
+    )
+    private void optifabric_copyOverOldBuffer(int criticalCapacity, CallbackInfo ci, ByteBuffer newBuffer) {
+        newBuffer.put(((me.modmuss50.optifabric.compat.stationrendererapi.mixin.TessellatorAccessor) self).optifabric_getByteBuffer().flip()).position(0);
+    }
+
+    @Inject(
+            method = "ensureBufferCapacity",
+            at = @At("RETURN")
+    )
+    private void optifabric_setBufferPositions(int criticalCapacity, CallbackInfo ci) {
+        me.modmuss50.optifabric.compat.stationrendererapi.mixin.TessellatorAccessor accessor = (me.modmuss50.optifabric.compat.stationrendererapi.mixin.TessellatorAccessor) self;
+        int position = access.stationapi$getBufferPosition();
+        accessor.optifabric_getIntBuffer().position(position);
+        accessor.optifabric_getFloatBuffer().position(position);
+        accessor.optifabric_getByteBuffer().position(position * 4);
     }
 }

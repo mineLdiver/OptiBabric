@@ -6,7 +6,8 @@
     "TessellatorMixin",
     "TextureHDFXMixin",
     "TextureManagerMixin",
-    "TextureUtilMixin"
+    "TextureUtilMixin",
+    "TessellatorAccessor"
   ],
   "refmap": "optibabric-refmap.json"
 }
