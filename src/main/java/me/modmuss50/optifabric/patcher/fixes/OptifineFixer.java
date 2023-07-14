@@ -1,6 +1,5 @@
 package me.modmuss50.optifabric.patcher.fixes;
 
-import me.modmuss50.optifabric.mod.OptifabricSetup;
 import me.modmuss50.optifabric.util.RemappingUtils;
 
 import java.util.*;
@@ -13,10 +12,7 @@ public class OptifineFixer {
 	private final Set<String> skippedClass = new HashSet<>();
 
 	private OptifineFixer() {
-		if (OptifabricSetup.isPresent("smoothbeta")) {
-//			registerFix("class_471", new SmoothWorldRendererFix());
-			skipClass("class_471");
-		}
+		// fixes here
 	}
 
 	private void registerFix(String className, ClassFixer classFixer) {
