@@ -48,6 +48,18 @@ repositories {
 		name = 'Jitpack'
 		url = 'https://jitpack.io'
 	}
+	// Used for another StationAPI dependency
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
 	mavenCentral()
 }
 

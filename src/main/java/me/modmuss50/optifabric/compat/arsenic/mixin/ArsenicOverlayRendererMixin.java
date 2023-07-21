@@ -14,11 +14,10 @@ import static org.objectweb.asm.Opcodes.GETFIELD;
 @Mixin(ArsenicOverlayRenderer.class)
 class ArsenicOverlayRendererMixin {
     @Redirect(
-            method = "renderItem(F)V",
+            method = "renderModel(FFLnet/minecraft/entity/player/AbstractClientPlayer;Lnet/minecraft/item/ItemInstance;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/Tessellator;start()V",
-                    ordinal = 1
+                    target = "Lnet/minecraft/client/render/Tessellator;start()V"
             )
     )
     private void optifabric_deferStart(Tessellator instance) {
@@ -26,11 +25,10 @@ class ArsenicOverlayRendererMixin {
     }
 
     @Redirect(
-            method = "renderItem3D",
+            method = "renderModel(Lnet/minecraft/entity/Living;Lnet/minecraft/item/ItemInstance;)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/Tessellator;start()V",
-                    ordinal = 6
+                    target = "Lnet/minecraft/client/render/Tessellator;start()V"
             )
     )
     private void optifabric_deferStart3D(Tessellator instance) {
