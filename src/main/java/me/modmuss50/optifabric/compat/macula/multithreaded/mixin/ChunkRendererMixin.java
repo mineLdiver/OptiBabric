@@ -9,9 +9,9 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.block.BlockRenderer;
 import net.minecraft.level.WorldPopulationRegion;
 import net.minecraft.tileentity.TileEntityBase;
-import net.optifine.IUpdateListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -30,7 +30,7 @@ class ChunkRendererMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     private void optifabric_onRenderBlockByRenderType(
-            IUpdateListener updateListener, CallbackInfo ci,
+            @Coerce Object updateListener, CallbackInfo ci,
             int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, boolean[] tempSkipRenderPass, Object lightCache, HashSet<TileEntityBase> hashset, int one, WorldPopulationRegion chunkcache, BlockRenderer renderblocks, Tessellator tessellator, int renderPass, boolean flag, boolean hasRenderedBlocks, boolean hasGlList, int y, int z, int x, int i3, BlockBase block
     ) {
         onRenderBlockByRenderType(ci, xMin, yMin, zMin, xMax, yMax, zMax, hashset, 1, chunkcache, renderblocks, renderPass, flag ? 1 : 0, hasRenderedBlocks ? 1 : 0, hasGlList ? 1 : 0, y, z, x, i3, block);
