@@ -1,8 +1,8 @@
 package me.modmuss50.optifabric.compat.arsenic.mixin;
 
-import me.modmuss50.optifabric.compat.InterceptingMixin;
-import me.modmuss50.optifabric.compat.PlacatingSurrogate;
-import me.modmuss50.optifabric.compat.Shim;
+import me.modmuss50.optifabric.api.mixin.InterceptingMixin;
+import me.modmuss50.optifabric.api.mixin.PlacatingSurrogate;
+import me.modmuss50.optifabric.api.mixin.Shim;
 import me.modmuss50.optifabric.compat.arsenic.ArsenicTextureManagerCompat;
 import net.minecraft.client.render.TextureBinder;
 import net.minecraft.client.texture.TextureManager;

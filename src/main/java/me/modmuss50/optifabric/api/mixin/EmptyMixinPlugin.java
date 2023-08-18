@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.compat;
+package me.modmuss50.optifabric.api.mixin;
 
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 

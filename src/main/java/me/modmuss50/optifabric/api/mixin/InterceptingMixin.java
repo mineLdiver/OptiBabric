@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.compat;
+package me.modmuss50.optifabric.api.mixin;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

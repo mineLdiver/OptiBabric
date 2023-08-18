@@ -1,7 +1,7 @@
 package me.modmuss50.optifabric.compat.bnb.mixin;
 
-import me.modmuss50.optifabric.compat.InterceptingMixin;
-import me.modmuss50.optifabric.compat.Shim;
+import me.modmuss50.optifabric.api.mixin.InterceptingMixin;
+import me.modmuss50.optifabric.api.mixin.Shim;
 import net.minecraft.sortme.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.compat;
+package me.modmuss50.optifabric.api.mixin;
 
 import me.modmuss50.optifabric.util.MixinUtils.Mixin;
 import org.objectweb.asm.tree.ClassNode;

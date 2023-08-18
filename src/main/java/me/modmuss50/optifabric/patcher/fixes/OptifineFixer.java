@@ -1,6 +1,6 @@
 package me.modmuss50.optifabric.patcher.fixes;
 
-import me.modmuss50.optifabric.util.RemappingUtils;
+import me.modmuss50.optifabric.api.util.RemappingUtils;
 
 import java.util.*;
 

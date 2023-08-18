@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.util;
+package me.modmuss50.optifabric.api.util;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;

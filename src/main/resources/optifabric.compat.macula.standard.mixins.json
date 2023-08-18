@@ -1,0 +1,9 @@
+{
+  "parent": "optifabric.mixins.json",
+  "package": "me.modmuss50.optifabric.compat.macula.standard.mixin",
+  "plugin": "me.modmuss50.optifabric.api.mixin.InterceptingMixinPlugin",
+  "client": [
+    "ChunkRendererMixin"
+  ],
+  "refmap": "optibabric-refmap.json"
+}

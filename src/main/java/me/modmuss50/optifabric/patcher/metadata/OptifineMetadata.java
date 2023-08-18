@@ -1,7 +1,7 @@
 package me.modmuss50.optifabric.patcher.metadata;
 
+import me.modmuss50.optifabric.api.util.Edition;
 import me.modmuss50.optifabric.mod.OptifabricSetup;
-import me.modmuss50.optifabric.util.Edition;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.*;
 

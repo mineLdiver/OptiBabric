@@ -1,0 +1,9 @@
+{
+  "parent": "optifabric.mixins.json",
+  "package": "me.modmuss50.optifabric.compat.macula.multithreaded.mixin",
+  "plugin": "me.modmuss50.optifabric.compat.macula.smooth.MaculaSmoothMixinPlugin",
+  "client": [
+    "ChunkRendererMixin"
+  ],
+  "refmap": "optibabric-refmap.json"
+}

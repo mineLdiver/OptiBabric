@@ -26,6 +26,15 @@
     ],
     "mm:early_risers": [
       "me.modmuss50.optifabric.mod.OptifabricSetup"
+    ],
+    "optifabric:compat_provider": [
+      "me.modmuss50.optifabric.compat.macula.MaculaCompatProvider",
+      "me.modmuss50.optifabric.compat.arsenic.ArsenicCompatProvider",
+      "me.modmuss50.optifabric.compat.glsl.GLSLCompatProvider",
+      "me.modmuss50.optifabric.compat.modmenu.ModMenuCompatProvider",
+      "me.modmuss50.optifabric.compat.stationflattening.StationFlatteningCompatProvider",
+      "me.modmuss50.optifabric.compat.stationrendererapi.StationRendererAPICompatProvider",
+      "me.modmuss50.optifabric.compat.bnb.BetterNetherBetaCompatProvider"
     ]
   },
   "mixins": [

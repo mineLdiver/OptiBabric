@@ -1,4 +1,4 @@
-package me.modmuss50.optifabric.util;
+package me.modmuss50.optifabric.api.util;
 
 import com.google.common.collect.Iterables;
 

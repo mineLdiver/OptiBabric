@@ -2,7 +2,7 @@
   "required": true,
   "package": "me.modmuss50.optifabric.mixin",
   "compatibilityLevel": "JAVA_17",
-  "plugin": "me.modmuss50.optifabric.compat.InterceptingMixinPlugin",
+  "plugin": "me.modmuss50.optifabric.api.mixin.InterceptingMixinPlugin",
   "client": [
   ],
   "injectors": {

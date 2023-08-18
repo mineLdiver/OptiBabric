@@ -1,8 +1,8 @@
 package me.modmuss50.optifabric.compat.arsenic.mixin;
 
-import me.modmuss50.optifabric.compat.InterceptingMixin;
-import me.modmuss50.optifabric.compat.PlacatingSurrogate;
-import me.modmuss50.optifabric.compat.Shim;
+import me.modmuss50.optifabric.api.mixin.InterceptingMixin;
+import me.modmuss50.optifabric.api.mixin.PlacatingSurrogate;
+import me.modmuss50.optifabric.api.mixin.Shim;
 import net.minecraft.block.BlockBase;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.block.BlockRenderer;

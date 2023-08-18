@@ -1,7 +1,7 @@
 package me.modmuss50.optifabric.compat.arsenic;
 
-import me.modmuss50.optifabric.compat.InterceptingMixinPlugin;
-import me.modmuss50.optifabric.util.RemappingUtils;
+import me.modmuss50.optifabric.api.mixin.InterceptingMixinPlugin;
+import me.modmuss50.optifabric.api.util.RemappingUtils;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;

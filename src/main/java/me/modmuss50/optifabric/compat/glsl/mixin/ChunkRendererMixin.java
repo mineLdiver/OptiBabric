@@ -1,7 +1,7 @@
 package me.modmuss50.optifabric.compat.glsl.mixin;
 
-import me.modmuss50.optifabric.compat.InterceptingMixin;
-import me.modmuss50.optifabric.compat.Shim;
+import me.modmuss50.optifabric.api.mixin.InterceptingMixin;
+import me.modmuss50.optifabric.api.mixin.Shim;
 import net.minecraft.block.BlockBase;
 import net.minecraft.class_66;
 import net.minecraft.client.render.block.BlockRenderer;

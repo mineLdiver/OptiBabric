@@ -1,11 +1,12 @@
 package me.modmuss50.optifabric.mod;
 
 import com.chocohead.mm.api.ClassTinkerers;
+import me.modmuss50.optifabric.api.entrypoint.CompatProvider;
+import me.modmuss50.optifabric.api.util.Edition;
 import me.modmuss50.optifabric.patcher.MethodComparison;
 import me.modmuss50.optifabric.patcher.fixes.OptifineFixer;
 import me.modmuss50.optifabric.patcher.metadata.OptifineContainer;
 import me.modmuss50.optifabric.patcher.metadata.OptifineIcon;
-import me.modmuss50.optifabric.util.Edition;
 import me.modmuss50.optifabric.util.MixinUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -129,18 +130,20 @@ public class OptifabricSetup implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        if (isPresent("station-renderer-arsenic"))
-            Mixins.addConfiguration("optifabric.compat.arsenic.mixins.json");
-        if (isPresent("glsl"))
-            Mixins.addConfiguration("optifabric.compat.glsl.mixins.json");
-        if (isPresent("modmenu"))
-            Mixins.addConfiguration("optifabric.compat.modmenu.mixins.json");
-        if (isPresent("station-flattening-v0"))
-            Mixins.addConfiguration("optifabric.compat.station-flattening-v0.mixins.json");
-        if (isPresent("station-renderer-api-v0"))
-            Mixins.addConfiguration("optifabric.compat.station-renderer-api-v0.mixins.json");
-        if (isPresent("bnb"))
-            Mixins.addConfiguration("optifabric.compat.bnb.mixins.json");
+        FabricLoader.getInstance().getEntrypointContainers("optifabric:compat_provider", CompatProvider.class)
+                .stream()
+                .filter(container -> FabricLoader.getInstance().isModLoaded(container.getEntrypoint().modid()))
+                .peek(container -> {
+                    var compatProvider = container.getEntrypoint();
+                    if (!compatProvider.isSupportedVersion())
+                        throw new IllegalStateException(
+                                "Compatibility provider %s supplied by %s for %s doesn't have support for OptiFine %s %s!"
+                                        .formatted(compatProvider.getClass().getName(), container.getProvider().getMetadata().getId(), compatProvider.modid(), EDITION.canonName, VERSION)
+                        );
+                })
+                .flatMap(container -> container.getEntrypoint().getMixinConfigs().stream())
+                .distinct()
+                .forEach(Mixins::addConfiguration);
     }
 
     private static boolean isPresent(String modID) {

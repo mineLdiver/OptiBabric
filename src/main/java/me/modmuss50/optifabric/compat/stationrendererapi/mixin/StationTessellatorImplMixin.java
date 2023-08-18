@@ -80,7 +80,8 @@ class StationTessellatorImplMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Ljava/util/Arrays;copyOf([II)[I"
-            )
+            ),
+            remap = false
     )
     private int[] optifabric_stopCallingArraysCopyOf(int[] original, int newLength) {
         return null;
@@ -91,7 +92,8 @@ class StationTessellatorImplMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/modificationstation/stationapi/mixin/render/client/TessellatorAccessor;stationapi$setBufferArray([I)V"
-            )
+            ),
+            remap = false
     )
     private void optifabric_stopSettingBufferArray(TessellatorAccessor instance, int[] ints) {}
 
@@ -101,7 +103,8 @@ class StationTessellatorImplMixin {
                     value = "INVOKE",
                     target = "Lnet/modificationstation/stationapi/mixin/render/client/TessellatorAccessor;stationapi$setByteBuffer(Ljava/nio/ByteBuffer;)V"
             ),
-            locals = LocalCapture.CAPTURE_FAILHARD
+            locals = LocalCapture.CAPTURE_FAILHARD,
+            remap = false
     )
     private void optifabric_copyOverOldBuffer(int criticalCapacity, CallbackInfo ci, ByteBuffer newBuffer) {
         newBuffer.put(((me.modmuss50.optifabric.compat.stationrendererapi.mixin.TessellatorAccessor) self).optifabric_getByteBuffer().flip()).position(0);
@@ -109,7 +112,8 @@ class StationTessellatorImplMixin {
 
     @Inject(
             method = "ensureBufferCapacity",
-            at = @At("RETURN")
+            at = @At("RETURN"),
+            remap = false
     )
     private void optifabric_setBufferPositions(int criticalCapacity, CallbackInfo ci) {
         me.modmuss50.optifabric.compat.stationrendererapi.mixin.TessellatorAccessor accessor = (me.modmuss50.optifabric.compat.stationrendererapi.mixin.TessellatorAccessor) self;

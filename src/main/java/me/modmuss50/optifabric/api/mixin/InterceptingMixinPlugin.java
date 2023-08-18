@@ -1,10 +1,10 @@
-package me.modmuss50.optifabric.compat;
+package me.modmuss50.optifabric.api.mixin;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import me.modmuss50.optifabric.api.util.RemappingUtils;
 import me.modmuss50.optifabric.util.MixinUtils;
 import me.modmuss50.optifabric.util.MixinUtils.Mixin;
-import me.modmuss50.optifabric.util.RemappingUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;

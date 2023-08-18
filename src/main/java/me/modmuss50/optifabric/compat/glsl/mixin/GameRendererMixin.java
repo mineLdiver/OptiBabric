@@ -1,7 +1,7 @@
 package me.modmuss50.optifabric.compat.glsl.mixin;
 
-import me.modmuss50.optifabric.compat.InterceptingMixin;
-import me.modmuss50.optifabric.compat.Shim;
+import me.modmuss50.optifabric.api.mixin.InterceptingMixin;
+import me.modmuss50.optifabric.api.mixin.Shim;
 import me.modmuss50.optifabric.compat.glsl.WorldRendererCompat;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.sortme.GameRenderer;
