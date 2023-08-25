@@ -34,7 +34,8 @@
       "me.modmuss50.optifabric.compat.modmenu.ModMenuCompatProvider",
       "me.modmuss50.optifabric.compat.stationflattening.StationFlatteningCompatProvider",
       "me.modmuss50.optifabric.compat.stationrendererapi.StationRendererAPICompatProvider",
-      "me.modmuss50.optifabric.compat.bnb.BetterNetherBetaCompatProvider"
+      "me.modmuss50.optifabric.compat.bnb.BetterNetherBetaCompatProvider",
+      "me.modmuss50.optifabric.compat.fov.FovCompatProvider"
     ]
   },
   "mixins": [
