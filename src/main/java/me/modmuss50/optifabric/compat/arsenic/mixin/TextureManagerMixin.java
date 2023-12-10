@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.awt.*;
 
 @Mixin(TextureManager.class)
-@InterceptingMixin("net/modificationstation/stationapi/mixin/arsenic/client/MixinTextureManager")
+@InterceptingMixin("net/modificationstation/stationapi/mixin/arsenic/client/TextureManagerMixin")
 class TextureManagerMixin {
     @Inject(
             method = "tick",

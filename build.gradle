@@ -1,5 +1,5 @@
 plugins {
-	id 'babric-loom' version '1.1.7'
+	id 'babric-loom' version '1.4.2'
 	id 'maven-publish'
 }
 
@@ -13,6 +13,7 @@ group = project.maven_group
 loom {
 	gluedMinecraftJar()
 	customMinecraftManifest.set("https://babric.github.io/manifest-polyfill/${minecraft_version}.json")
+	intermediaryUrl.set("https://maven.glass-launcher.net/babric/babric/intermediary/%1\$s/intermediary-%1\$s-v2.jar")
 	accessWidenerPath = file("src/main/resources/optifabric.accesswidener")
 }
 
@@ -78,12 +79,12 @@ dependencies {
 	modImplementation("com.github.calmilamsy:ModMenu:${project.modmenu_version}") {
 		transitive false
 	}
-	modImplementation("net.glasslauncher.mods:GlassConfigAPI:${project.gcapi_version}") {
-		transitive false
-	}
-	modImplementation("net.glasslauncher:HowManyItems-Fabric-Unofficial:${project.howmanyitems_version}") {
-		transitive false
-	}
+//	modImplementation("net.glasslauncher.mods:GlassConfigAPI:${project.gcapi_version}") {
+//		transitive false
+//	}
+//	modImplementation("net.glasslauncher:HowManyItems-Fabric-Unofficial:${project.howmanyitems_version}") {
+//		transitive false
+//	}
 
 	modImplementation "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"
 	include "com.github.Chocohead:Fabric-ASM:${project.fabric_asm_version}"

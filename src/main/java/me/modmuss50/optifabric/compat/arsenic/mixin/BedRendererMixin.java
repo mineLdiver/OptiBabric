@@ -1,47 +1,48 @@
 package me.modmuss50.optifabric.compat.arsenic.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import me.modmuss50.optifabric.api.mixin.InterceptingMixin;
-import me.modmuss50.optifabric.api.mixin.PlacatingSurrogate;
 import me.modmuss50.optifabric.api.mixin.Shim;
 import net.minecraft.block.BlockBase;
-import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.block.BlockRenderer;
+import net.modificationstation.stationapi.api.client.texture.Sprite;
+import net.modificationstation.stationapi.api.client.texture.atlas.Atlas;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockRenderer.class)
 @InterceptingMixin("net/modificationstation/stationapi/mixin/arsenic/client/block/BedRendererMixin")
 class BedRendererMixin {
-    @Shim
-    private native void stationapi_bed_captureTexture1(
-            BlockBase i, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,
-            Tessellator var5, int var6, int var7, int var8, float var9, float var10, float var11, float var12, float var13, float var14, float var15, float var16, float var17, float var18, float var19, float var20, float var21, float var22, float var23, float var24, float var25, int texture1
-    );
-
-    @PlacatingSurrogate
-    private void stationapi_bed_captureTexture1(
-            BlockBase i, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,
-            Tessellator var5, int var6, int var7, boolean var8, float var9, float var10, float var11, float var12, float var13, float var14, float var15, float var16, float var17, float var18, float var19, float var20, float var21, float var22, float var23, float var24, float var25, int texture1
+    @Inject(
+            method = "renderBed",
+            at = @At("HEAD")
+    )
+    private void optifabric_bed_captureAtlas(
+            BlockBase block, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,
+            @Share("atlas") LocalRef<Atlas> atlas
     ) {
-        stationapi_bed_captureTexture1(i, j, k, par4, cir, var5, var6, var7, var8 ? 1 : 0, var9, var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var20, var21, var22, var23, var24, var25, texture1);
+        atlas.set(block.getAtlas());
     }
 
-    @Shim
-    private native void stationapi_bed_captureTexture2(
+    @Inject(
+            method = "renderBed",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/block/BlockBase;getTextureForSide(Lnet/minecraft/level/BlockView;IIII)I",
+                    ordinal = 0,
+                    shift = At.Shift.BY,
+                    by = 2
+            )
+    )
+    private void optifabric_bed_captureTexture1(
             BlockBase i, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,
-            Tessellator var5, int var6, int var7, int var8, float var9, float var10, float var11, float var12, float var13, float var14, float var15, float var16, float var17, float var18, float var19, float var20, float var21, float var22, float var23, float var24, float var25, float var26, int texture2
-    );
-
-    @PlacatingSurrogate
-    private void stationapi_bed_captureTexture2(
-            BlockBase i, int j, int k, int par4, CallbackInfoReturnable<Boolean> cir,
-            Tessellator var5, int var6, int var7, boolean var8, float var9, float var10, float var11, float var12, float var13, float var14, float var15, float var16, float var17, float var18, float var19, float var20, float var21, float var22, float var23, float var24, float var25, int var26, int texture2
+            @Local(index = 26) int texture1,
+            @Share("atlas") LocalRef<Atlas> atlas, @Share("texture") LocalRef<Sprite> texture
     ) {
-        stationapi_bed_captureTexture2(i, j, k, par4, cir, var5, var6, var7, var8 ? 1 : 0, var9, var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var20, var21, var22, var23, var24, var25, var26, texture2);
+        texture.set(atlas.get().getTexture(texture1).getSprite());
     }
 
     @ModifyVariable(
@@ -52,21 +53,33 @@ class BedRendererMixin {
                     ordinal = 1
             )
     )
-    private double optifabric_bed_modTexture2Y(double y) {
-        return stationapi_bed_modTexture2Y((int) y);
+    private double optifabric_bed_modTexture2Y(
+            double y,
+            @Share("texture") LocalRef<Sprite> texture
+    ) {
+        return stationapi_bed_modTexture2Y((int) y, texture);
     }
 
     @Shim
-    private native int stationapi_bed_modTexture2Y(int y);
+    private native int stationapi_bed_modTexture2Y(
+            int y,
+            LocalRef<Sprite> texture
+    );
 
     @ModifyConstant(
             method = "renderBed",
             constant = @Constant(doubleValue = 16)
     )
-    private double optifabric_bed_modTexture2Height(double height) {
-        return stationapi_bed_modTexture2Height((int) height);
+    private double optifabric_bed_modTexture2Height(
+            double height,
+            @Share("texture") LocalRef<Sprite> texture
+    ) {
+        return stationapi_bed_modTexture2Height((int) height, texture);
     }
 
     @Shim
-    private native int stationapi_bed_modTexture2Height(int height);
+    private native int stationapi_bed_modTexture2Height(
+            int height,
+            LocalRef<Sprite> texture
+    );
 }

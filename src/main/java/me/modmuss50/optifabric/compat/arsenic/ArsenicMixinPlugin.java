@@ -43,6 +43,28 @@ public class ArsenicMixinPlugin extends InterceptingMixinPlugin {
                     }
                 }
             }
+            case "TextRendererMixin" -> {
+                String initDesc = "(Lnet/minecraft/class_322;Ljava/lang/String;Lnet/minecraft/class_76;)V"; // void (GameOptions, String, TextureManager)
+                String init = RemappingUtils.getMethodName("class_34", "<init>", initDesc); // TextRenderer, <init>
+                initDesc = RemappingUtils.mapMethodDescriptor(initDesc);
+                for (MethodNode method : targetClass.methods) {
+                    if (init.equals(method.name) && initDesc.equals(method.desc)) {
+                        InsnList extra = new InsnList();
+                        LabelNode skip = new LabelNode();
+
+                        String tessellator = RemappingUtils.getClassName("class_67");
+
+                        String instanceDesc = "Lnet/minecraft/class_67;";
+                        String instance = RemappingUtils.mapFieldName("class_67", "field_2054", instanceDesc);
+
+                        extra.add(new JumpInsnNode(GOTO, skip));
+                        extra.add(new FieldInsnNode(GETSTATIC, tessellator, instance, "L" + tessellator + ";"));
+                        extra.add(new InsnNode(POP));
+                        extra.add(skip);
+                        method.instructions.insertBefore(method.instructions.getLast(), extra);
+                    }
+                }
+            }
         }
         super.preApply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }

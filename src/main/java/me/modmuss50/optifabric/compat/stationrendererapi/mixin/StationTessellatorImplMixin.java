@@ -91,7 +91,7 @@ class StationTessellatorImplMixin {
             method = "ensureBufferCapacity",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/modificationstation/stationapi/mixin/render/client/TessellatorAccessor;stationapi$setBufferArray([I)V"
+                    target = "Lnet/modificationstation/stationapi/mixin/render/client/TessellatorAccessor;stationapi$setBuffer([I)V"
             ),
             remap = false
     )
