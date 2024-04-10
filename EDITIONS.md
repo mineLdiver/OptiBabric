@@ -46,6 +46,6 @@ All Minecraft Beta 1.7.3 OptiFine editions [suffer on long distances](https://gi
 
 However, there are community-made patches for this issue.
 
-- [HD MT G2 Long Distance Patch v1.1](https://cdn.discordapp.com/attachments/397852025586712576/782773490360516608/Optifine_MT_G2_Long_Distance_Patch_1.1.zip) by [historian](https://github.com/FluorideHistorian)
+- [HD MT G2 Long Distance Patch v1.1](https://github.com/sp614x/optifine/files/5638110/Optifine_MT_G2_Long_Distance_Patch_1.1.zip) by [historian](https://github.com/FluorideHistorian)
 
 - [HD G Long Distance Patch v2](https://github.com/FarnGitHub/Other-Minecraft-Mod/releases/tag/OFlongDistancePatchV2) by [Farn](https://github.com/FarnGitHub)
